@@ -19,8 +19,19 @@ session_start();
     <?php include '../link.php';?>
     <title>Accueil</title>
     <style>
+        body{
+            font-size: 1.1rem;
+            font-family: Poppins,serif;
+        }
+
+        a{
+            text-decoration: none;
+            color: white;
+            text-align: center;
+        }
+
         .top{
-            background-color: #f1f1f1;
+            background-color: #5c8df9;
             width: 100%;
             padding: 10px 10px;
             display: flex;
@@ -52,7 +63,38 @@ session_start();
             display: flex;
             flex-direction: column;
             gap: 1em;
+            transition: all 0.1s;
+            background-color: white;
         }
+
+        .block:hover{
+            background-color: #5c8df9;
+            color: white;
+        }
+
+        .block:hover a{
+            border: 1px solid white;
+        }
+
+        .block .box{
+            display: flex;
+            width: 250px;
+        }
+
+        .box .icon{
+            width: 50px;
+            height: 50px;
+        }
+
+        .consulter{
+            background-color: #5c8df9;
+            border-radius: 5px;
+            padding: 10px;
+            width: 80%;
+            max-width: 90px;
+        }
+
+        
 
     </style>
 </head>
@@ -75,19 +117,32 @@ session_start();
             <div class="first">
                 <?php if(!empty($isPseudo)):?>
                     
-                    <div class="block">
+                    <div class="block block1">
                         <h2>Interesser</h2>
-                        <p>Ici se trouve toute les annonces qui vous intéresse</p>
+                        <div class="box">
+                            <p>Ici se trouve ce qui vous intéresse</p>
+                            <img src="../../assets/images/aimer.png" alt="like" class="icon">
+                        </div>
+                        
+                        <a href="" class="consulter">Voir</a>
                     </div>
 
-                    <div class="block">
+                    <div class="block block2">
                         <h2>Reservation</h2>
-                        <p>Ici se trouve toute vos réservations</p>
+                        <div class="box">
+                            <p>Ici se trouve toute vos réservations</p>
+                            <img src="../../assets/images/reserver.png" alt="like" class="icon">
+                        </div>
+                        <a href="" class="consulter">Voir</a>
                     </div>
 
-                    <div class="block">
+                    <div class="block block3">
                         <h2>Publication</h2>
-                        <p>Ici se trouve toute vos publications</p>
+                        <div class="box">
+                            <p>Ici se trouve toute vos publications</p>
+                            <img src="../../assets/images/partager.png" alt="like" class="icon">
+                        </div>
+                        <a href="" class="consulter">Voir</a>
                     </div>
                     
                 <?php else:?>
@@ -95,6 +150,10 @@ session_start();
                     <h4>En tant qu'invité vous ne pouvez ni réservé, ni publier...</h4>
 
                 <?php endif;?>
+            </div>
+
+            <div id="maisons">
+                
             </div>
         </div>
     </div>
