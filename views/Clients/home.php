@@ -3,13 +3,31 @@ session_start();
     require '../../dconnect.php';
     $connect = $pdo;
 
-    if(!empty($_SESSION['imosam_pseudo'])){
-        $isPseudo = $connect->prepare("SELECT * FROM clients WHERE pseudo = :pseudo");
-        $isPseudo->execute(array(
+    //Identification du client par son pseudo en session
+    if(!empty($_SESSION['imosam_pseudo']))
+    {
+        $user = $connect->prepare("SELECT * FROM clients WHERE pseudo = :pseudo");
+        $user->execute(array(
             'pseudo' => $_SESSION['imosam_pseudo']
         ));
-        $isPseudo = $isPseudo->fetch();
-        var_dump($isPseudo);
+        $user = $user->fetch();
+    }
+
+    //Si le client n'existe pas, vérifie si c'est l'Admin qui se connecte
+    elseif(!empty($_SESSION['imosam_Apseudo']) && !empty($_SESSION['imosam_Aemail'])) 
+    {
+        $admin = $connect->prepare("SELECT * FROM admin WHERE nom = :nom AND email = :email");
+        $admin->execute(array(
+            'nom' => $_SESSION['imosam_Apseudo'],
+            'email' => $_SESSION['imosam_Aemail']
+        ));
+        $admin = $admin->fetch();
+
+        if ($admin) 
+        {
+            header('location: ../Admin/home.php');
+        }
+        
     }
 
 ?>
@@ -101,8 +119,8 @@ session_start();
 <body>
     <div class="container">
         <div class="top">
-            <?php if(!empty($isPseudo)):?>
-                <h4>Welcome <?=mb_strtoupper($isPseudo['nom']);?></h4> 
+            <?php if(!empty($user)):?>
+                <h4>Welcome <?=mb_strtoupper($user['nom']);?></h4> 
                 <a href="logout.php" class="logout">Déconnecter</a>
             <?php else:?>
                 <h4>Welcome Invité</h4>
@@ -115,7 +133,7 @@ session_start();
 
         <div class="section">
             <div class="first">
-                <?php if(!empty($isPseudo)):?>
+                <?php if(!empty($user)):?>
                     
                     <div class="block block1">
                         <h2>Interesser</h2>
