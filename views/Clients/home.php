@@ -49,12 +49,38 @@ session_start();
         }
 
         .top{
-            background-color: #5c8df9;
+            background-color: #333;
             width: 100%;
             padding: 10px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: white;
+        }
+
+        .top #title{
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+
+        .top .icon{
+            width: 60px;
+        }
+
+        .top a{
+            background-color: #444;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .top .next{
+            background-color: #5c8df9;
+        }
+
+        .Uicon{
+            border-radius: 50%;
+            filter: drop-shadow(5px 1px 5px #000);
         }
 
         .section{
@@ -112,6 +138,10 @@ session_start();
             max-width: 90px;
         }
 
+        .title2{
+            margin: 0 auto;
+        }
+
         
 
     </style>
@@ -120,10 +150,10 @@ session_start();
     <div class="container">
         <div class="top">
             <?php if(!empty($user)):?>
-                <h4>Welcome <?=mb_strtoupper($user['nom']);?></h4> 
+                <h4 id="title"><img src="../../assets/images/logo.png" alt="" class="icon Uicon"> Welcome <?=mb_strtoupper($user['nom']);?></h4> 
                 <a href="logout.php" class="logout">Déconnecter</a>
             <?php else:?>
-                <h4>Welcome Invité</h4>
+                <h4 id="title"><img src="../../assets/images/logo.png" alt="" class="icon">Welcome Invité</h4>
                 <div class="buttongroup">
                     <a href="../../index.php" class="logout">Retour</a>
                     <a href="login.php" class="next">Se connecter</a>
@@ -165,20 +195,15 @@ session_start();
                     
                 <?php else:?>
 
-                    <h4>En tant qu'invité vous ne pouvez ni réservé, ni publier...</h4>
+                    <h4 class="title2">En tant qu'invité vous ne pouvez ni réservé, ni publier...</h4>
 
                 <?php endif;?>
             </div>
 
             <div id="maisons">
-                
+                <h1>Maison</h1>
             </div>
         </div>
     </div>
 </body>
-<script>
-    setInterval(function(){
-        window.location.reload();
-    },2000)
-</script>
 </html>
