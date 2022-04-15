@@ -81,13 +81,6 @@
             font-size: 1.2rem;
         }
 
-        .buttongroup a{
-            text-decoration: none;
-            color: white;
-            background-color: #333;
-            border-radius: 2px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -109,7 +102,7 @@
 
             <div class="buttongroup">
                 <input type="submit" value="connexion">
-                <a href="../../index.php" class="button">Retour</a>
+                <a href="../../index.php" class="back">Retour</a>
             </div>
             
         </form>

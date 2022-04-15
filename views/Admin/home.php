@@ -1,6 +1,7 @@
 <?php
     session_start();
     require '../../dconnect.php';
+    require '../../Admin/Admin.php';
     $connect = $pdo;
 
     //Identification du client par son pseudo en session
@@ -14,78 +15,54 @@
         $admin = $admin->fetch();
         
     }
+
+    $maisons = new Admin();
+    $maisons = $maisons->getAllMaisons();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <?php include '../link.php';?>
+    <link rel="stylesheet" href="\SAMAEDI\IMMOBILIER\assets\css\admin.css">
     <title>Admin</title>
-    <style>
-        .container{
-            font-size: 1.2rem;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        }
-        .top{
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            width: 100%;
-            background-color: #5c8df9;
-            padding: 5px;
-        }
-
-        .top .logout{
-            text-decoration: none;
-            color: white;
-            background-color: #5c7ac3;
-            padding: 10px;
-            border-radius: 40px;
-        }
-
-        .topleft{
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-            border: 1px solid white;
-            border-radius: 40px;
-            padding-right: 10px;
-            background-color: white;
-            color: #aaa;
-        }
-
-        .topleft .icon{
-            width: 45px;
-            border-radius: 50%;
-            background-color: white;
-            border: 2px solid white;
-        }
-
-        .topleft em{
-            color: red;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
+        <?php include 'topAdmin.php';?>
         <?php if(!empty($admin)):?>
 
-            <div class="top">
-                <div class="topleft">
-                    <img src="../../assets/images/admin.png" alt="icon_Admin" class="icon">
-                    <h4>Administrateur <em><?= $admin['nom']." ".$admin['prenoms'];?></em>&nbsp; Email: <em><?= $admin['email'];?></em></h4>
+            <div class="section">
+                <div class="block">
+                    <a href="add.php">Ajouter une propriété</a>
                 </div>
-
-                <a href="../Clients/logout.php" class="logout">Déconnexion</a>
+                <div class="block">
+                    <a href="reservation.php">Demande de reservation</a>
+                </div>
             </div>
+            
+            <?php if(!empty($maisons)):?>
+                <div class="maisons">
+                    <?php foreach($maisons as $maison):?>
+                        <div class="maison">
+                            <img src="../../uploads/<?= $maison['image'];?>" alt="image_maison" width="100px">
+                            <h3 class="description">
+                            <?= $maison['description'] ;?>
+                            </h3>
+                            <h3 class="lieu"><?= $maison['lieu'] ;?></h3>
+                            <h2 class="contact"><?= $maison['contact'] ;?></h2>
+                            <h4 class="date"><?= date('h:i:s',strtotime($maison['date'])) ;?></h4>
+                            <div class="btngroup">
+                                <a href="edit.php?maisonid=<?php echo $maison['id']?>" id="edit">edit</a>
+                                <a href="delete.php?maisonid=<?php echo $maison['id']?>" id="delete">delete</a>
+                            </div>
+                        </div>
+                    <?php endforeach ;?>
+                </div>
+            <?php endif ;?>
 
         <?php else:?>
             <?php header('location: ../../error.php');?>
         <?php endif;?>
     </div>
 </body>
-<script>
-    setInterval(function(){
-        window.location.reload();
-    },2000)
-</script>
 </html>

@@ -11,6 +11,10 @@ session_start();
             'pseudo' => $_SESSION['imosam_pseudo']
         ));
         $user = $user->fetch();
+
+        $maisons = $connect->prepare("SELECT * FROM maisons");
+        $maisons->execute();
+        $maisons = $maisons->fetchAll();
     }
 
     //Si le client n'existe pas, vérifie si c'est l'Admin qui se connecte
@@ -95,7 +99,7 @@ session_start();
             display: flex;
             width: 90%;
             max-width: 800px;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             gap: 1em;
         }
@@ -142,25 +146,16 @@ session_start();
             margin: 0 auto;
         }
 
-        
+        .btngroup a {
+            color: black;
+        }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="top">
-            <?php if(!empty($user)):?>
-                <h4 id="title"><img src="../../assets/images/logo.png" alt="" class="icon Uicon"> Welcome <?=mb_strtoupper($user['nom']);?></h4> 
-                <a href="logout.php" class="logout">Déconnecter</a>
-            <?php else:?>
-                <h4 id="title"><img src="../../assets/images/logo.png" alt="" class="icon">Welcome Invité</h4>
-                <div class="buttongroup">
-                    <a href="../../index.php" class="logout">Retour</a>
-                    <a href="login.php" class="next">Se connecter</a>
-                </div>
-            <?php endif;?>
-        </div>
-
+        
+        <?php include 'topHome.php';?>
         <div class="section">
             <div class="first">
                 <?php if(!empty($user)):?>
@@ -181,16 +176,7 @@ session_start();
                             <p>Ici se trouve toute vos réservations</p>
                             <img src="../../assets/images/reserver.png" alt="like" class="icon">
                         </div>
-                        <a href="" class="consulter">Voir</a>
-                    </div>
-
-                    <div class="block block3">
-                        <h2>Publication</h2>
-                        <div class="box">
-                            <p>Ici se trouve toute vos publications</p>
-                            <img src="../../assets/images/partager.png" alt="like" class="icon">
-                        </div>
-                        <a href="" class="consulter">Voir</a>
+                        <a href="reserver.php" class="consulter">Voir</a>
                     </div>
                     
                 <?php else:?>
@@ -200,10 +186,58 @@ session_start();
                 <?php endif;?>
             </div>
 
-            <div id="maisons">
-                <h1>Maison</h1>
-            </div>
+            <?php if(!empty($maisons)):?>
+                <div class="maisons">
+                    <?php foreach($maisons as $maison):?>
+                        <div class="maison">
+                            <img src="../../uploads/<?= $maison['image'];?>" alt="image_maison" width="100px">
+                            <h3 class="description">
+                            <?= $maison['description'] ;?>
+                            </h3>
+                            <h3 class="lieu"><?= $maison['lieu'] ;?></h3>
+                            <h2 class="contact"><?= $maison['contact'] ;?></h2>
+                            <h4 class="date">publié le <?= date('d/m/Y à H:i:s',strtotime($maison['date'])) ;?></h4>
+                            <div class="btngroup">
+                                <a href="" class="interesser" id="<?php echo $maison['id']?>">interresser</a>
+                                <a href="" class="reserver" id="<?php echo $maison['id']?>">reserver</a>
+                            </div>
+                        </div>
+                    <?php endforeach ;?>
+                </div>
+            <?php endif ;?>
         </div>
     </div>
 </body>
+<script>
+   
+    $(document).on('click','.interesser',function(){
+        var thisClick = $(this);
+        var maisonid = thisClick.attr('id');
+        var userid = <?= $user['id'];?>;
+
+        $.ajax({
+            type: "POST",
+            url: '../../Post/cli_interest.php',
+            data: {userId: userid, maisonId: maisonid},
+            success: function(data) {
+                alert(data)
+            }
+        });
+    });
+
+    $(document).on('click','.reserver',function(){
+        var thisClick = $(this);
+        var maisonid = thisClick.attr('id');
+        var userid = <?= $user['id'];?>;
+
+        $.ajax({
+            type: "POST",
+            url: '../../Post/cli_reserver.php',
+            data: {userId: userid, maisonId: maisonid},
+            success: function(data) {
+                alert(data)
+            }
+        });
+    });
+</script>
 </html>
