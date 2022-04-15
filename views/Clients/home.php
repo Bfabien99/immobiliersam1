@@ -12,12 +12,7 @@ $connect = $connect->dbConnect();
             'pseudo' => $_SESSION['imosam_pseudo']
         ));
         $user = $user->fetch();
-
-        $maisons = $connect->prepare("SELECT * FROM maisons");
-        $maisons->execute();
-        $maisons = $maisons->fetchAll();
     }
-
     //Si le client n'existe pas, vérifie si c'est l'Admin qui se connecte
     elseif(!empty($_SESSION['imosam_Apseudo']) && !empty($_SESSION['imosam_Aemail'])) 
     {
@@ -35,6 +30,10 @@ $connect = $connect->dbConnect();
         
     }
 
+    $maisons = $connect->prepare("SELECT * FROM maisons");
+        $maisons->execute();
+        $maisons = $maisons->fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,6 +49,7 @@ $connect = $connect->dbConnect();
 
         .container{
             gap: 1em;
+            padding-bottom: 10px;
         }
 
         a{
@@ -247,11 +247,6 @@ $connect = $connect->dbConnect();
                         </div>
                         <a href="reserver.php" class="consulter">Voir</a>
                     </div>
-                    
-                <?php else:?>
-
-                    <h4 class="title2">En tant qu'invité vous ne pouvez ni réservé, ni publier...</h4>
-
                 <?php endif;?>
             </div>
 
@@ -282,6 +277,7 @@ $connect = $connect->dbConnect();
                                 <h3 class="date"><?= date('d/m/Y à H:i:s',strtotime($maison['date'])) ;?></h3>
                             </div>
 
+                            <?php if(!empty($user)):?>
                             <div class="btngroup">
                                 <?php 
                                 $Client = new Client;
@@ -293,6 +289,7 @@ $connect = $connect->dbConnect();
                                 <?php endif;?>
                                 <a href="reservation.php?maisonid=<?php echo $maison['id']?>" class="reserver">reserver</a>
                             </div>
+                            <?php endif ;?>
 
                             <div class="msg"></div>
                         </div>
