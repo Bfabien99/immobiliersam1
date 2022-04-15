@@ -162,6 +162,8 @@ $connect = $connect->dbConnect();
             align-items: flex-start;
             justify-content: space-around;
             width: 100%;
+            flex-wrap: wrap;
+            gap: 0.5em;
         }
 
         .maison{
