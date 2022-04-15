@@ -1,7 +1,6 @@
 <?php
     session_start();
     require '../../Client/Client.php';
-    require '../../dconnect.php';
     $connect = new Client();
     $connect = $connect->dbConnect();
 
@@ -38,7 +37,6 @@
 
         .container{
             justify-content: space-between;
-            background-color:red;
         }
 
         .top{
@@ -75,6 +73,52 @@
             border-radius: 50%;
             filter: drop-shadow(5px 1px 5px #000);
         }
+
+        .maisons{
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .maison{
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+            max-width: 500px;
+            background-color: white;
+            min-height: 400px;
+            justify-content: space-evenly;
+            align-items: center;
+            gap: 1em;
+            box-shadow: 1px 0px 5px #eee;
+            overflow: auto;
+        }
+
+        .image_maison{
+            width: 100%;
+        }
+
+        .content{
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .content h3{
+            width: 200px;
+            font-size: 1rem;
+            font-family: Roboto;
+            font-weight: 300;
+        }
+
+        .indication{
+            min-width: 200px ;
+            color: #444;
+            text-decoration: underline;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -83,28 +127,39 @@
 
         <h3>Liste des réservations</h3>
 
-        <div class="section">
+        <div class="maisons">
         <?php if(!empty($reserver)):?>
             
             <?php foreach($reserver as $maison):?>
-                <div class="reserver">
-                        <img src="../../uploads/<?= $maison["image"];?>" alt="image_maison" width="200px">
-                        <h3>
-                            <em>Description: <?= $maison["description"];?></em>
-                        </h3>
-                        <h3>
-                            <em>Lieu: <?= $maison["lieu"];?></em>
-                        </h3>
-                        <h3>
-                            <em>Contact Proprio: <?= $maison["contact"];?></em>
-                        </h3>
-                        <h3>
-                            <em>Date Reservation: <?= $maison["fait_le"];?></em>
-                        </h3>
-                        
+                <div class="maison">
+                    <img src="../../uploads/<?= $maison['image'];?>" alt="image_maison" class="image_maison">
+                    
+                    <div class="content">
+                        <p class="indication">description</p>
+                        <h3 class="description">
+                        <?= $maison['description'] ;?></h3>
                     </div>
+                    
+                    <div class="content">
+                        <p class="indication">lieu</p>
+                        <h3 class="lieu"><?= $maison['lieu'] ;?></h3>
+                    </div>
+
+                    <div class="content">
+                        <p class="indication">contact propriétaire</p>
+                        <h3 class="contact"><?= $maison['contact'] ;?></h3>
+                    </div>
+
+                    <div class="content">
+                        <p class="indication">Reservé pour le</p>
+                        <h3 class="date"><?= date('d/m/Y',strtotime($maison['date_res'])) ;?> à <?= $maison['heure'];?></h3>
+                    </div>
+
+                </div>
             <?php endforeach;?>
-            
+
+        <?php else:?>
+            <h3>Si vous avez fait une réservation, veuillez patientez pendant que nous la validons. Merci</h3>
         <?php endif;?>
         </div>
         <a href="home.php" class="back">retour</a>

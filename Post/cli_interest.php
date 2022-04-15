@@ -14,7 +14,7 @@
             }
         }
         else{
-            echo "Déja ajouter à la liste interesser";
+            echo "Déja marquer comme interesser";
         }
         
     }

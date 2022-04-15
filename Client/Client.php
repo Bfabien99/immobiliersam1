@@ -79,11 +79,14 @@
             }
         }
 
-        public function reserver($userId, $maisonId)
+        public function reserver($userId, $maisonId, $date, $heure)
         {
             $db = $this->dbConnect();
-            $insert = $db->prepare("INSERT INTO reservation SET maison_id = $maisonId, client_id = $userId");
-            $insert->execute();
+            $insert = $db->prepare("INSERT INTO reservation SET maison_id = $maisonId, client_id = $userId, date_res = :date, heure = :heure");
+            $insert->execute(array(
+                "date" => $date,
+                "heure" => $heure
+            ));
 
             if($insert){
                 return $insert;

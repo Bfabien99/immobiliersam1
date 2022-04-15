@@ -1,7 +1,8 @@
 <?php
 session_start();
-    require '../../dconnect.php';
-    $connect = $pdo;
+require '../../Client/Client.php';
+$connect = new Client();
+$connect = $connect->dbConnect();
 
     //Identification du client par son pseudo en session
     if(!empty($_SESSION['imosam_pseudo']))
@@ -44,6 +45,11 @@ session_start();
         body{
             font-size: 1.1rem;
             font-family: Poppins,serif;
+            font-weight: 100;
+        }
+
+        .container{
+            gap: 1em;
         }
 
         a{
@@ -93,6 +99,7 @@ session_start();
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 1em;
         }
 
         .first{
@@ -150,6 +157,78 @@ session_start();
             color: black;
         }
 
+        .maisons{
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .maison{
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+            max-width: 500px;
+            background-color: white;
+            min-height: 400px;
+            justify-content: space-evenly;
+            align-items: center;
+            gap: 1em;
+            box-shadow: 1px 0px 5px #eee;
+            overflow: auto;
+        }
+
+        .image_maison{
+            width: 100%;
+        }
+
+        .content{
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .content h3{
+            width: 200px;
+            font-size: 1rem;
+            font-family: Roboto;
+            font-weight: 300;
+        }
+
+        .indication{
+            min-width: 200px ;
+            color: #444;
+            text-decoration: underline;
+            font-style: italic;
+        }
+
+        .btngroup{
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+        }
+
+        .btngroup a{
+            padding: 5px 7px;
+            border-radius: 2px;
+            font-weight: 200;
+            color: white;
+            cursor: pointer;
+        }
+
+        .interesser{
+            background-color: #333;
+        }
+
+        .reserver{
+            background-color: #5c8df9;
+        }
+
+        .igreen{
+            background-color: green;
+        }
+
     </style>
 </head>
 <body>
@@ -161,16 +240,6 @@ session_start();
                 <?php if(!empty($user)):?>
                     
                     <div class="block block1">
-                        <h2>Interesser</h2>
-                        <div class="box">
-                            <p>Ici se trouve ce qui vous intéresse</p>
-                            <img src="../../assets/images/aimer.png" alt="like" class="icon">
-                        </div>
-                        
-                        <a href="" class="consulter">Voir</a>
-                    </div>
-
-                    <div class="block block2">
                         <h2>Reservation</h2>
                         <div class="box">
                             <p>Ici se trouve toute vos réservations</p>
@@ -190,17 +259,42 @@ session_start();
                 <div class="maisons">
                     <?php foreach($maisons as $maison):?>
                         <div class="maison">
-                            <img src="../../uploads/<?= $maison['image'];?>" alt="image_maison" width="100px">
-                            <h3 class="description">
-                            <?= $maison['description'] ;?>
-                            </h3>
-                            <h3 class="lieu"><?= $maison['lieu'] ;?></h3>
-                            <h2 class="contact"><?= $maison['contact'] ;?></h2>
-                            <h4 class="date">publié le <?= date('d/m/Y à H:i:s',strtotime($maison['date'])) ;?></h4>
-                            <div class="btngroup">
-                                <a href="" class="interesser" id="<?php echo $maison['id']?>">interresser</a>
-                                <a href="" class="reserver" id="<?php echo $maison['id']?>">reserver</a>
+                            <img src="../../uploads/<?= $maison['image'];?>" alt="image_maison" class="image_maison">
+                            
+                            <div class="content">
+                                <p class="indication">description</p>
+                                <h3 class="description">
+                                <?= $maison['description'] ;?></h3>
                             </div>
+                            
+                            <div class="content">
+                                <p class="indication">lieu</p>
+                                <h3 class="lieu"><?= $maison['lieu'] ;?></h3>
+                            </div>
+
+                            <div class="content">
+                                <p class="indication">contact propriétaire</p>
+                                <h3 class="contact"><?= $maison['contact'] ;?></h3>
+                            </div>
+
+                            <div class="content">
+                                <p class="indication">date de publication</p>
+                                <h3 class="date"><?= date('d/m/Y à H:i:s',strtotime($maison['date'])) ;?></h3>
+                            </div>
+
+                            <div class="btngroup">
+                                <?php 
+                                $Client = new Client;
+                                $isExist = $Client->getInteresser($user['id'],$maison['id']);?>
+                                <?php if($isExist):?>
+                                <a class="interesser igreen" id="<?php echo $maison['id']?>">interresser</a>
+                                <?php else:?>
+                                <a class="interesser" id="<?php echo $maison['id']?>">interresser</a>
+                                <?php endif;?>
+                                <a href="reservation.php?maisonid=<?php echo $maison['id']?>" class="reserver">reserver</a>
+                            </div>
+
+                            <div class="msg"></div>
                         </div>
                     <?php endforeach ;?>
                 </div>
@@ -209,8 +303,8 @@ session_start();
     </div>
 </body>
 <script>
-   
-    $(document).on('click','.interesser',function(){
+
+    $(document).on('click','.interesser',function(e){
         var thisClick = $(this);
         var maisonid = thisClick.attr('id');
         var userid = <?= $user['id'];?>;
@@ -220,24 +314,18 @@ session_start();
             url: '../../Post/cli_interest.php',
             data: {userId: userid, maisonId: maisonid},
             success: function(data) {
-                alert(data)
-            }
-        });
-    });
-
-    $(document).on('click','.reserver',function(){
-        var thisClick = $(this);
-        var maisonid = thisClick.attr('id');
-        var userid = <?= $user['id'];?>;
-
-        $.ajax({
-            type: "POST",
-            url: '../../Post/cli_reserver.php',
-            data: {userId: userid, maisonId: maisonid},
-            success: function(data) {
-                alert(data)
+                let msg = e.target.parentElement.parentElement.lastElementChild;
+                $(msg).html(data);
+                setTimeout(()=>{
+                    $(msg).html("")
+                },2000)
             }
         });
     });
 </script>
+<!-- <script>
+    setInterval(()=>{
+        window.location.reload();
+    },3000)
+</script> -->
 </html>
