@@ -5,6 +5,8 @@
     $connect = $pdo;
     $Admin = new Admin();
 
+    $msg = "";
+
     function cleanPost($post){
         $post = trim($post);
         $post = stripslashes($post);
@@ -34,7 +36,7 @@
             //Verifie si l'image est chargée
             if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
                 //Verifie la taille de l'image
-                if($_FILES['image']['size'] <= 1000000){
+                if($_FILES['image']['size'] <= 4000000){
                     $fileInfo = pathinfo($_FILES['image']['name']);
                     $extension = $fileInfo['extension'];
                     $allowedExtensions = array('jpg', 'jpeg', 'png');
@@ -43,7 +45,6 @@
                     if(in_array($extension, $allowedExtensions)){
                         //On stocke le fichier
                         $image = str_replace("/","",password_hash(rand(1,9999999), PASSWORD_DEFAULT) . basename($_FILES['image']['name']));
-                        move_uploaded_file($_FILES['image']['tmp_name'], '../../uploads/' . $image);
                         
                         $description = cleanPost($_POST['description']);
                         $lieu = cleanPost($_POST['lieu']);
@@ -52,22 +53,23 @@
                         $Admin->update($maison['id'],$description, $image, $lieu, $contact);
 
                         if($Admin){
-                            echo "Enregistré";
+                            $msg = "Enregistré";
+                            move_uploaded_file($_FILES['image']['tmp_name'], '../../uploads/' . $image);
 
                         }
                         else{
-                            echo "Non enregistré";
+                            $msg = "Non enregistré";
                         }
                         
 
                     }
                     else {
-                        echo "Format non valide";
+                        $msg = "Format non valide";
                     }
 
                 }
                 else {
-                    echo "image trop volumineuse";
+                    $msg = "image trop volumineuse";
                 }
             }
             else {
@@ -214,6 +216,9 @@
                 <label for="image">image</label>
                 <input type="file" name="image" id="image">
             </div>
+            <?php if(!empty($msg)):?>
+                <p class="msg"><?= $msg?></p>
+            <?php endif; ?>
             <input type="submit" name="submit" value="Enregistrer">
         </form>
 
