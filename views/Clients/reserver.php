@@ -157,6 +157,12 @@
                         <h3 class="date"><?= date('d/m/Y',strtotime($maison['date_res'])) ;?> à <?= $maison['heure'];?></h3>
                     </div>
 
+                    <?php if($maison['active'] == 1):?>
+                        <h1>Activé</h1>
+                    <?php else:?>
+                        <h3>Attente de confirmation</h3>
+                    <?php endif;?>
+
                 </div>
             <?php endforeach;?>
 

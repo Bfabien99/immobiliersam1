@@ -99,7 +99,7 @@
         public function getActiveReserver($userId)
         {
             $db = $this->dbConnect();
-            $reserver = $db->prepare("SELECT * FROM `reservation` INNER JOIN maisons on maison_id = maisons.id WHERE client_id = $userId AND active = 1");
+            $reserver = $db->prepare("SELECT * FROM `reservation` INNER JOIN maisons on maison_id = maisons.id WHERE client_id = $userId");
             $reserver->execute();
             $reserver = $reserver->fetchAll();
 
